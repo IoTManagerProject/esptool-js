@@ -17,6 +17,17 @@ const lblConnTo = document.getElementById("lblConnTo");
 const table = document.getElementById("fileTable") as HTMLTableElement;
 const alertDiv = document.getElementById("alertDiv");
 
+let firmSettings = [
+  {
+     "addr":"0x00000000",
+     "path":"/"
+  },
+  {
+    "addr":"0x00100000",
+    "path":"/"
+  }
+];
+
 // This is a frontend example of Esptool-JS using local bundle file
 // To optimize use a CDN hosted version like
 // https://unpkg.com/esptool-js@0.2.0/bundle.js
@@ -37,6 +48,8 @@ disconnectButton.style.display = "none";
 eraseButton.style.display = "none";
 consoleStopButton.style.display = "none";
 filesDiv.style.display = "none";
+
+createTableFromJson();
 
 function handleFileSelect(evt) {
   const file = evt.target.files[0];
@@ -131,7 +144,7 @@ addFileButton.onclick = () => {
   const element1 = document.createElement("input");
   element1.type = "text";
   element1.id = "offset" + rowCount;
-  element1.value = "0x1000";
+  element1.value = "0x1000!";
   cell1.appendChild(element1);
 
   // Column 2 - File selector
@@ -165,6 +178,42 @@ addFileButton.onclick = () => {
     cell4.appendChild(element4);
   }
 };
+
+
+
+
+
+function createTableFromJson() {
+  for (var i = 0; i < firmSettings.length; i++) {
+    console.log('------');
+    const rowCount = table.rows.length;
+    const row = table.insertRow(rowCount);
+  
+    //Column 1 - Offset
+    const cell1 = row.insertCell(0);
+    const element1 = document.createElement("input");
+    element1.type = "text";
+    element1.id = "offset" + rowCount;
+    element1.value = firmSettings[i].addr;
+    cell1.appendChild(element1);
+
+    // Column 2 - File selector
+    const cell2 = row.insertCell(1);
+    const element2 = document.createElement("input");
+    element2.type = "file";
+    element2.id = "selectFile" + rowCount;
+    element2.name = "selected_File" + rowCount;
+    element2.addEventListener("change", handleFileSelect, false);
+    cell2.appendChild(element2);
+
+
+    // Column 3  - Progress
+    const cell3 = row.insertCell(2);
+    cell3.classList.add("progress-cell");
+    cell3.style.display = "none";
+    cell3.innerHTML = `<progress value="0" max="100"></progress>`;
+  }
+}
 
 function removeRow(row) {
   const rowIndex = Array.from(table.rows).indexOf(row);
@@ -285,7 +334,7 @@ programButton.onclick = async () => {
     progressBars.push(progressBar);
 
     row.cells[2].style.display = "initial";
-    row.cells[3].style.display = "none";
+    //row.cells[3].style.display = "none";
 
     fileArray.push({ data: fileObj.data, address: offset });
   }
@@ -309,9 +358,9 @@ programButton.onclick = async () => {
     // Hide progress bars and show erase buttons
     for (let index = 1; index < table.rows.length; index++) {
       table.rows[index].cells[2].style.display = "none";
-      table.rows[index].cells[3].style.display = "initial";
+      //table.rows[index].cells[3].style.display = "initial";
     }
   }
 };
 
-addFileButton.onclick(this);
+//addFileButton.onclick(this);
