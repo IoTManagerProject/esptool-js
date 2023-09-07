@@ -20,12 +20,12 @@ const alertDiv = document.getElementById('alertDiv');
 const firmSettings = [
   {
     addr: '0x00000000',
-    link: 'https://portaller.cloud/compiler/files/rise33@yandex.ru/1694120212546/firmware.bin',
+    link: 'https://portaller.cloud/compiler/files/rise33@yandex.ru/1694086560920/firmware.bin',
     data: '',
   },
   {
     addr: '0x00100000',
-    link: 'https://portaller.cloud/compiler/files/rise33@yandex.ru/1694120212546/littlefs.bin',
+    link: 'https://portaller.cloud/compiler/files/rise33@yandex.ru/1694086560920/littlefs.bin',
     data: '',
   },
 ];
@@ -52,21 +52,6 @@ consoleStopButton.style.display = 'none';
 filesDiv.style.display = 'none';
 
 createTableFromJson();
-
-function handleFileSelect(evt) {
-  const file = evt.target.files[0];
-
-  if (!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = (ev: ProgressEvent<FileReader>) => {
-    evt.target.data = ev.target.result;
-    console.log('evt.target.data', evt.target.data);
-  };
-
-  reader.readAsBinaryString(file);
-}
 
 function getFile(url, index) {
   const xhr = new XMLHttpRequest();
@@ -161,10 +146,17 @@ function createTableFromJson() {
 
     //Column 1 - Offset
     const cell1 = row.insertCell(0);
-    const element1 = document.createElement('p');
+    const element1 = document.createElement('input');
+    element1.type = 'text';
     element1.id = 'offset' + rowCount;
-    element1.innerText = firmSettings[i].addr;
+    element1.value = firmSettings[i].addr;
     cell1.appendChild(element1);
+
+    //const cell1 = row.insertCell(0);
+    //const element1 = document.createElement('p');
+    //element1.id = 'offset' + rowCount;
+    //element1.innerText = firmSettings[i].addr;
+    //cell1.appendChild(element1);
 
     getFile(firmSettings[i].link, i);
 
