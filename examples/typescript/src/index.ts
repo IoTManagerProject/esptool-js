@@ -19,13 +19,13 @@ const alertDiv = document.getElementById("alertDiv");
 
 let firmSettings = [
   {
-     "addr":"0x00000000",
-     "path":"/"
-  },
-  {
-    "addr":"0x00100000",
-    "path":"/"
-  }
+    "addr":"0x00000000",
+    "link":"https://portaller.cloud/compiler/files/rise33@yandex.ru/1694086560920/firmware.bin"
+ },
+ {
+   "addr":"0x00100000",
+   "link":"https://portaller.cloud/compiler/files/rise33@yandex.ru/1694086560920/littlefs.bin"
+ }
 ];
 
 // This is a frontend example of Esptool-JS using local bundle file
@@ -60,9 +60,33 @@ function handleFileSelect(evt) {
 
   reader.onload = (ev: ProgressEvent<FileReader>) => {
     evt.target.data = ev.target.result;
+    console.log("evt.target.data", evt.target.data);
   };
 
   reader.readAsBinaryString(file);
+}
+
+function getFile(url) {
+  console.log("try get file");
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+
+  // Hack to pass bytes through unprocessed.
+  xhr.overrideMimeType('text/plain; charset=x-user-defined');
+
+  xhr.onreadystatechange = function(e) {
+  if (this.readyState == 4 && this.status == 200) {
+    var binStr = this.responseText;
+    console.log("---", binStr);
+    //for (var i = 0, len = binStr.length; i < len; ++i) {
+    //  var c = binStr.charCodeAt(i);
+    //  //String.fromCharCode(c & 0xff);
+    //  var byte = c & 0xff;  // byte at offset i
+    //}
+    }
+  };
+
+  xhr.send();
 }
 
 const espLoaderTerminal = {
@@ -197,6 +221,8 @@ function createTableFromJson() {
     element1.value = firmSettings[i].addr;
     cell1.appendChild(element1);
 
+    getFile(firmSettings[i].link);
+
     // Column 2 - File selector
     const cell2 = row.insertCell(1);
     const element2 = document.createElement("input");
@@ -204,6 +230,7 @@ function createTableFromJson() {
     element2.id = "selectFile" + rowCount;
     element2.name = "selected_File" + rowCount;
     element2.addEventListener("change", handleFileSelect, false);
+    //console.log("element2 ", element2);
     cell2.appendChild(element2);
 
 
