@@ -17,19 +17,6 @@ const lblConnTo = document.getElementById('lblConnTo');
 const table = document.getElementById('fileTable') as HTMLTableElement;
 const alertDiv = document.getElementById('alertDiv');
 
-const firmSettings = [
-  {
-    addr: '0x00000000',
-    link: 'https://portaller.cloud/compiler/files/rise33@yandex.ru/1694086560920/firmware.bin',
-    data: '',
-  },
-  {
-    addr: '0x00100000',
-    link: 'https://portaller.cloud/compiler/files/rise33@yandex.ru/1694086560920/littlefs.bin',
-    data: '',
-  },
-];
-
 // This is a frontend example of Esptool-JS using local bundle file
 // To optimize use a CDN hosted version like
 // https://unpkg.com/esptool-js@0.2.0/bundle.js
@@ -46,12 +33,27 @@ let transport: Transport;
 let chip: string = null;
 let esploader: ESPLoader;
 
+let firmSettings = null;
+
 disconnectButton.style.display = 'none';
 eraseButton.style.display = 'none';
 consoleStopButton.style.display = 'none';
 filesDiv.style.display = 'none';
 
-createTableFromJson();
+getFirm();
+
+function getFirm() {
+  fetch('https://portaller.cloud/compiler/firmparams/1694120212546', {})
+    .then((res) => res.json())
+    .then((res) => {
+      console.log(res);
+      firmSettings = res;
+      createTableFromJson();
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+}
 
 function getFile(url, index) {
   const xhr = new XMLHttpRequest();
@@ -139,41 +141,43 @@ eraseButton.onclick = async () => {
 };
 
 function createTableFromJson() {
-  for (let i = 0; i < firmSettings.length; i++) {
-    console.log('------');
-    const rowCount = table.rows.length;
-    const row = table.insertRow(rowCount);
+  if (firmSettings) {
+    for (let i = 0; i < firmSettings.length; i++) {
+      console.log('------');
+      const rowCount = table.rows.length;
+      const row = table.insertRow(rowCount);
 
-    //Column 1 - Offset
-    const cell1 = row.insertCell(0);
-    const element1 = document.createElement('input');
-    element1.type = 'text';
-    element1.id = 'offset' + rowCount;
-    element1.value = firmSettings[i].addr;
-    cell1.appendChild(element1);
+      //Column 1 - Offset
+      const cell1 = row.insertCell(0);
+      const element1 = document.createElement('input');
+      element1.type = 'text';
+      element1.id = 'offset' + rowCount;
+      element1.value = firmSettings[i].addr;
+      cell1.appendChild(element1);
 
-    //const cell1 = row.insertCell(0);
-    //const element1 = document.createElement('p');
-    //element1.id = 'offset' + rowCount;
-    //element1.innerText = firmSettings[i].addr;
-    //cell1.appendChild(element1);
+      //const cell1 = row.insertCell(0);
+      //const element1 = document.createElement('p');
+      //element1.id = 'offset' + rowCount;
+      //element1.innerText = firmSettings[i].addr;
+      //cell1.appendChild(element1);
 
-    getFile(firmSettings[i].link, i);
+      getFile(firmSettings[i].link, i);
 
-    // Column 2 - File name
-    const cell2 = row.insertCell(1);
-    const element2 = document.createElement('p');
-    element2.id = 'parag' + rowCount;
-    let text = firmSettings[i].link;
-    text = text.substring(text.lastIndexOf('/') + 1, text.length);
-    element2.innerText = text;
-    cell2.appendChild(element2);
+      // Column 2 - File name
+      const cell2 = row.insertCell(1);
+      const element2 = document.createElement('p');
+      element2.id = 'parag' + rowCount;
+      let text = firmSettings[i].link;
+      text = text.substring(text.lastIndexOf('/') + 1, text.length);
+      element2.innerText = text;
+      cell2.appendChild(element2);
 
-    // Column 3  - Progress
-    const cell3 = row.insertCell(2);
-    cell3.classList.add('progress-cell');
-    cell3.style.display = 'none';
-    cell3.innerHTML = `<progress value="0" max="100"></progress>`;
+      // Column 3  - Progress
+      const cell3 = row.insertCell(2);
+      cell3.classList.add('progress-cell');
+      cell3.style.display = 'none';
+      cell3.innerHTML = `<progress value="0" max="100"></progress>`;
+    }
   }
 }
 
