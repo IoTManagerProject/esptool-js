@@ -5,7 +5,6 @@ const resetButton = document.getElementById('resetButton') as HTMLButtonElement;
 const consoleStartButton = document.getElementById('consoleStartButton') as HTMLButtonElement;
 const consoleStopButton = document.getElementById('consoleStopButton') as HTMLButtonElement;
 const eraseButton = document.getElementById('eraseButton') as HTMLButtonElement;
-const addFileButton = document.getElementById('addFile') as HTMLButtonElement;
 const programButton = document.getElementById('programButton');
 const filesDiv = document.getElementById('files');
 const terminal = document.getElementById('terminal');
@@ -15,7 +14,15 @@ const lblBaudrate = document.getElementById('lblBaudrate');
 const lblConsoleFor = document.getElementById('lblConsoleFor');
 const lblConnTo = document.getElementById('lblConnTo');
 const table = document.getElementById('fileTable') as HTMLTableElement;
+const fileStatusTable = document.getElementById('fileStatusTable') as HTMLTableElement;
 const alertDiv = document.getElementById('alertDiv');
+
+const orderId_p = document.getElementById('orderId');
+
+const urlParams = new URLSearchParams(window.location.search);
+const orderId = urlParams.get('id');
+
+console.log(orderId);
 
 // This is a frontend example of Esptool-JS using local bundle file
 // To optimize use a CDN hosted version like
@@ -35,6 +42,8 @@ let esploader: ESPLoader;
 
 let firmSettings = null;
 
+const allLoaded = false;
+
 disconnectButton.style.display = 'none';
 eraseButton.style.display = 'none';
 consoleStopButton.style.display = 'none';
@@ -43,32 +52,59 @@ filesDiv.style.display = 'none';
 getFirm();
 
 function getFirm() {
-  fetch('https://portaller.cloud/compiler/firmparams/1694120212546', {})
+  fetch('https://portaller.cloud/compiler/firmparams/' + orderId, {})
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
-      firmSettings = res;
-      createTableFromJson();
+      if (res[0].msg === 'err_order_not_exist') {
+        orderId_p.classList.add('text-danger');
+        orderId_p.innerText = 'Сборка не существует';
+      } else {
+        firmSettings = res;
+        createTableFromJson();
+        orderId_p.innerText = 'ID сборки: ' + orderId;
+      }
     })
     .catch((e) => {
       console.log(e);
     });
 }
 
-function getFile(url, index) {
+function getFile(sett, index) {
   const xhr = new XMLHttpRequest();
-  xhr.open('GET', url, true);
+  xhr.open('GET', sett.link, true);
   xhr.overrideMimeType('text/plain; charset=x-user-defined');
   xhr.onreadystatechange = function (e) {
     if (this.readyState == 4 && this.status == 200) {
       const binStr = this.responseText;
-      console.log('get bin file from url', url);
+      console.log('get bin file from url', sett.link);
       firmSettings[index].data = binStr;
     }
   };
 
+  xhr.onprogress = () => {
+    console.log('LOADING: ', xhr.status);
+  };
+
+  xhr.onload = () => {
+    console.log('DONE: ', xhr.status);
+    sett.loaded = true;
+  };
+
   xhr.send();
 }
+
+//function tableAddFile(url) {
+//  const rowCount = fileStatusTable.rows.length;
+//  const row = fileStatusTable.insertRow(rowCount);
+//  const cell1 = row.insertCell(0);
+//
+//  const p = document.createElement('p');
+//  p.id = 'tabl' + rowCount;
+//
+//  const text = url.substring(url.lastIndexOf('/') + 1, url.length);
+//  p.innerText = text;
+//  cell1.appendChild(p);
+//}
 
 const espLoaderTerminal = {
   clean() {
@@ -161,7 +197,7 @@ function createTableFromJson() {
       //element1.innerText = firmSettings[i].addr;
       //cell1.appendChild(element1);
 
-      getFile(firmSettings[i].link, i);
+      getFile(firmSettings[i], i);
 
       // Column 2 - File name
       const cell2 = row.insertCell(1);
