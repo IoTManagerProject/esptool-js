@@ -27,8 +27,8 @@
     <div class="container" id="main">
       <hr />
       <div id="program">
-        <h3>Program</h3>
-        <label for="baudrates" id="lblBaudrate">Baudrate:</label>
+        <h3>Прошить</h3>
+        <label for="baudrates" id="lblBaudrate">Скорость:</label>
         <label style="display: none" id="lblConnTo">Connected to device: </label>
         <select name="baudrates" id="baudrates">
           <option value="115200">115200</option>
@@ -37,9 +37,9 @@
           <option value="230400">230400</option>
         </select>
 
-        <input class="btn btn-info btn-sm" type="button" id="connectButton" value="Connect" />
-        <input class="btn btn-warning btn-sm" type="button" id="disconnectButton" value="Disconnect" />
-        <input class="btn btn-danger btn-sm" type="button" id="eraseButton" value="Erase Flash" />
+        <input class="btn btn-info btn-sm" type="button" id="connectButton" value="Подключиться" />
+        <input class="btn btn-warning btn-sm" type="button" id="disconnectButton" value="Отключиться" />
+        <input class="btn btn-danger btn-sm" type="button" id="eraseButton" value="Стереть flash" />
         <br />
 
         <div class="alert alert-danger alert-dismissible" id="alertDiv" style="display: none; margin-top: 10px">
@@ -51,26 +51,25 @@
           <table class="table table-striped" id="fileTable">
             <thead class="thead-light">
               <tr>
-                <th>Flash Address</th>
-                <th>File</th>
+                <th>Адреса (менять не нужно)</th>
+                <th>Файлы</th>
                 <th></th>
               </tr>
             </thead>
             <tbody id="tableBody"></tbody>
           </table>
-          <input class="btn btn-info btn-sm" type="button" id="addFile" value="Add File" />
-          <input class="btn btn-info btn-sm" type="button" id="programButton" value="Program" />
+          <input class="btn btn-danger btn-sm" type="button" id="programButton" value="Прошить!" />
         </div>
         <output id="list"></output>
         <hr />
       </div>
       <div id="console">
-        <h3>Console</h3>
-        <label style="display: none" id="lblConsoleFor">Connected to device: </label>
+        <h3>Монитор порта</h3>
+        <label style="display: none" id="lblConsoleFor">Подключено к устройству! Нажмите на устройстве кнопку reset</label>
 
-        <input class="btn btn-info" type="button" id="consoleStartButton" value="Start" />
-        <input class="btn btn-info" type="button" id="consoleStopButton" value="Stop" />
-        <input class="btn btn-info" type="button" id="resetButton" value="Reset" />
+        <input class="btn btn-info btn-sm" type="button" id="consoleStartButton" value="Открыть монитор порта" />
+        <input class="btn btn-info btn-sm" type="button" id="consoleStopButton" value="Остановить" />
+        <input class="btn btn-info btn-sm" type="button" id="resetButton" value="Сброс" />
         <hr />
       </div>
       <div id="terminal"></div>

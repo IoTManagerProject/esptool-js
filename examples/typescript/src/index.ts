@@ -143,7 +143,7 @@ connectButton.onclick = async () => {
 
   console.log('Settings done for :' + chip);
   lblBaudrate.style.display = 'none';
-  lblConnTo.innerHTML = 'Connected to device: ' + chip;
+  lblConnTo.innerHTML = 'Подключено к устройству: ' + chip;
   lblConnTo.style.display = 'block';
   baudrates.style.display = 'none';
   connectButton.style.display = 'none';
