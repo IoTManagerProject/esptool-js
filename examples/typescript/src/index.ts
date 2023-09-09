@@ -348,6 +348,8 @@ function isConnectedDevCorrect() {
     return true;
   } else if (chip.includes('8266') && chipFromServer.includes('8266')) {
     return true;
+  } else if (chip.includes('8285') && chipFromServer.includes('8285')) {
+    return true;
   } else {
     return false;
   }
