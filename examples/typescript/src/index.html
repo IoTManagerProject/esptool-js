@@ -15,6 +15,8 @@
   <body>
     <h2 align="center"><p>Добро пожаловать в online flasher</p></h1>
     <h4 align="center" class="text-primary" id="orderId"></h4>
+    <h4 align="center" class="text-primary" id="loadStatus"></h4>
+    <p align="center" class="text-primary" id="firmName"></p>
 
     <div class="container container-sm" id="tabl">
     <table class="table table-striped" id="fileStatusTable">
@@ -29,7 +31,7 @@
       <div id="program">
         <h3>Прошить</h3>
         <label for="baudrates" id="lblBaudrate">Скорость:</label>
-        <label style="display: none" id="lblConnTo">Connected to device: </label>
+        <label style="display: none" id="lblConnTo">Подключено к устройству: </label>
         <select name="baudrates" id="baudrates">
           <option value="115200">115200</option>
           <option value="921600">921600</option>

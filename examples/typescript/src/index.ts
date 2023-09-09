@@ -18,6 +18,8 @@ const fileStatusTable = document.getElementById('fileStatusTable') as HTMLTableE
 const alertDiv = document.getElementById('alertDiv');
 
 const orderId_p = document.getElementById('orderId');
+const loadStatus_p = document.getElementById('loadStatus');
+const firmName_p = document.getElementById('firmName');
 
 const urlParams = new URLSearchParams(window.location.search);
 const orderId = urlParams.get('id');
@@ -38,11 +40,10 @@ term.open(terminal);
 let device = null;
 let transport: Transport;
 let chip: string = null;
+let chipFromServer: string = null;
 let esploader: ESPLoader;
 
 let firmSettings = null;
-
-const allLoaded = false;
 
 disconnectButton.style.display = 'none';
 eraseButton.style.display = 'none';
@@ -55,13 +56,17 @@ function getFirm() {
   fetch('https://portaller.cloud/compiler/firmparams/' + orderId, {})
     .then((res) => res.json())
     .then((res) => {
-      if (res[0].msg === 'err_order_not_exist') {
+      if (res.msg === 'err_order_not_exist') {
         orderId_p.classList.add('text-danger');
         orderId_p.innerText = 'Сборка не существует';
       } else {
-        firmSettings = res;
+        firmSettings = res.files;
         createTableFromJson();
         orderId_p.innerText = 'ID сборки: ' + orderId;
+        chipFromServer = res.order.projectProp.platformio.default_envs;
+        firmName_p.innerText = chipFromServer;
+        loadStatus_p.classList.add('text-danger');
+        loadStatus_p.innerText = 'Скачивание файлов прошивки...';
       }
     })
     .catch((e) => {
@@ -88,9 +93,24 @@ function getFile(sett, index) {
   xhr.onload = () => {
     console.log('DONE: ', xhr.status);
     sett.loaded = true;
+    //проверяем все ли флаги true
+    if (checkStatus()) {
+      loadStatus_p.classList.replace('text-danger', 'text-success');
+      loadStatus_p.innerText = 'Файлы успешно загружены!';
+      console.log('ALL LOADED!!!');
+    }
   };
 
   xhr.send();
+}
+
+function checkStatus() {
+  for (let i = 0; i < firmSettings.length; i++) {
+    if (!firmSettings[i].loaded) {
+      return false;
+    }
+  }
+  return true;
 }
 
 //function tableAddFile(url) {
@@ -275,6 +295,13 @@ consoleStopButton.onclick = async () => {
 };
 
 programButton.onclick = async () => {
+  if (isConnectedDevCorrect()) {
+    console.log('CORRECT!');
+  } else {
+    console.log('WRONG ESP!');
+    alert('Подключена не правильная плата!');
+    return;
+  }
   const fileArray = [];
   const progressBars = [];
 
@@ -315,3 +342,13 @@ programButton.onclick = async () => {
     }
   }
 };
+
+function isConnectedDevCorrect() {
+  if (chip.includes('32') && chipFromServer.includes('32')) {
+    return true;
+  } else if (chip.includes('8266') && chipFromServer.includes('8266')) {
+    return true;
+  } else {
+    return false;
+  }
+}
