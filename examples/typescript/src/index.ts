@@ -53,7 +53,7 @@ filesDiv.style.display = 'none';
 getFirm();
 
 function getFirm() {
-  fetch('https://portaller.cloud/compiler/firmparams/' + orderId, {})
+  fetch('https://portal.iotmanager.org/compiler/firmparams/' + orderId, {})
     .then((res) => res.json())
     .then((res) => {
       if (res.msg === 'err_order_not_exist') {
