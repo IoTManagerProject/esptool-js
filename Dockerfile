@@ -17,7 +17,8 @@ RUN npm run build
 
 # Build the example frontend (Parcel -> dist/)
 WORKDIR /app/examples/typescript
-RUN npm ci
+# No package-lock.json here, use npm install
+RUN npm install --no-audit --no-fund
 RUN npm run build
 
 # Stage 2: Serve with nginx
