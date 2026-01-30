@@ -6,7 +6,8 @@ WORKDIR /app
 
 # Root deps (library build)
 COPY package*.json ./
-RUN npm ci
+# Avoid running prepare/build before sources are copied
+RUN npm ci --ignore-scripts
 
 COPY . .
 
